@@ -1,0 +1,14 @@
+name: Auto script for BUAA Daily Health Report
+on:
+  schedule:
+    - cron: "30 9 * * *"
+jobs:
+  Report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-python@v2
+        with:
+          python-version: "3.9"
+      - run: pip install -r requirements.txt
+      - run: python main.py -u ${{secrets.USERNAME}} -p ${{seecrts.PASSWORD}} -o ${{secrets.LONGITUDE}} -a ${{secrets.LATITUDE}} -m 5
