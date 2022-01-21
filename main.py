@@ -25,9 +25,7 @@ def login(browser, username, password, el_user, el_pwd, el_btn):
     username_input.send_keys(username)
     password_input.send_keys(password)
     login_button.click()
-    return None
-    # wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of_element_located(el_loc))
-    # TODO: check whether login succeeded or not
+    # wait.WebDriverWait(browser, 20).until(EC.visibility_of_element_located([By.XPATH, el_loc]))
 
 
 def report(browser, longitude, latitude, el_loc, el_sub, el_con):
@@ -49,14 +47,12 @@ window.navigator.geolocation.getCurrentPosition = function (success) {{
     submit_button = browser.find_element(By.XPATH, el_sub)
     submit_button.click()
     browser.implicitly_wait(5)
-    # confirm_button = browser.find_element(By.XPATH, el_con)
-    # confirm_button.click()
-    # browser.implicitly_wait(5)
-    return None
-    # wait.WebDriverWait(browser, timeout=10).until(lambda: len(location_button.text) > 0)
-    # wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of_element_located(el_con))
-    # wait.WebDriverWait(browser, timeout=10).until_not(EC.element_to_be_clickable(submit_button))
-    # TODO: check whether report succeeded or not
+    confirm_button = browser.find_element(By.XPATH, el_con)
+    confirm_button.click()
+    browser.implicitly_wait(5)
+    # wait.WebDriverWait(browser, 20).until(lambda: len(location_button.text) > 0)
+    # wait.WebDriverWait(browser, 20).until(EC.visibility_of_element_located([By.XPATH, el_con]))
+    # wait.WebDriverWait(browser, 20).until_not(EC.element_to_be_clickable(submit_button))
 
 
 if __name__ == "__main__":
@@ -69,8 +65,6 @@ if __name__ == "__main__":
     parser.add_argument('--max-attempts', '-m', type=int, default=3, help='max times of attempts when report failed')
     opt = parser.parse_args()
     print('options are: ', opt)
-
-    print(str(opt.latitude).split('.'))
 
     print('loading meta data...')
     with open('meta.json', 'r') as fp:
@@ -95,7 +89,7 @@ if __name__ == "__main__":
         print('login page opened')
 
         print('login into system...')
-        msg = login(
+        login(
             browser,
             opt.username,
             opt.password,
@@ -103,9 +97,6 @@ if __name__ == "__main__":
             meta['el']['password'],
             meta['el']['login_btn'],
         )
-        if msg:
-            print('login failed: ', msg)
-            continue
         print('login succeeded')
 
         browser.implicitly_wait(8)
@@ -113,7 +104,7 @@ if __name__ == "__main__":
         print('open report page...')
         try:
             browser.get(meta['url']['report'])
-            browser.implicitly_wait(10)
+            browser.implicitly_wait(20)
             print(browser.title, browser.current_url)
         except Exception:
             print('network error!')
