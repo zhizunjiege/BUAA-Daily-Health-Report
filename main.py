@@ -1,10 +1,11 @@
 import argparse
 import json
+import time
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
-from selenium.webdriver.support import expected_conditions as EC, wait
+# from selenium.webdriver.support import expected_conditions as EC, wait
 from webdriver_manager.chrome import ChromeDriverManager
 
 
@@ -25,7 +26,8 @@ def login(browser, username, password, el_user, el_pwd, el_btn, el_loc):
     username_input.send_keys(username)
     password_input.send_keys(password)
     login_button.click()
-    wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of_element_located(el_loc))
+    time.sleep(10)
+    # wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of_element_located(el_loc))
 
     # TODO: check whether login succeeded or not
 
@@ -49,10 +51,12 @@ window.navigator.geolocation.getCurrentPosition = function (success) {{
 
     location_button = browser.find_element(By.XPATH, el_loc)
     location_button.click()
-    wait.WebDriverWait(browser, timeout=10).until(lambda: len(location_button.text) > 0)
+    time.sleep(10)
+    # wait.WebDriverWait(browser, timeout=10).until(lambda: len(location_button.text) > 0)
     submit_button = browser.find_element(By.XPATH, el_sub)
     submit_button.click()
-    wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of_element_located(el_con))
+    time.sleep(10)
+    # wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of_element_located(el_con))
     # confirm_button = browser.find_element(By.XPATH, el_con)
     # confirm_button.click()
     # wait.WebDriverWait(browser, timeout=10).until_not(EC.element_to_be_clickable(submit_button))
