@@ -78,9 +78,7 @@ if __name__ == "__main__":
     opt = parser.parse_args()
     print('options are: ', opt)
 
-    print(opt.username.upper())
-    print(opt.username.split(''))
-    print(opt.latitude)
+    print(str(opt.latitude).split('.'))
 
     print('loading meta data...')
     with open('meta.json', 'r') as fp:

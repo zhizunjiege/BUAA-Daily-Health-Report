@@ -12,4 +12,4 @@ jobs:
         with:
           python-version: "3.9"
       - run: pip install -r requirements.txt
-      - run: python main.py -u ${{secrets.USERNAME}} -p ${{secrets.PASSWORD}} -o ${{secrets.LONGITUDE}} -a ${{secrets.LATITUDE}} -m 5
+      - run: python main.py -u ${{ secrets.USERNAME }} -p ${{ secrets.PASSWORD }} -o ${{ secrets.LONGITUDE }} -a ${{ secrets.LATITUDE }} -m 5
