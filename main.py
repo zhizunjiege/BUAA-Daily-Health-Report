@@ -25,7 +25,7 @@ def login(browser, username, password, el_user, el_pwd, el_btn, el_loc):
     username_input.send_keys(username)
     password_input.send_keys(password)
     login_button.click()
-    browser.implicitly_wait(10)
+    browser.implicitly_wait(5)
     # wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of_element_located(el_loc))
     print(browser.title)
     print(browser.current_url)
@@ -52,11 +52,11 @@ window.navigator.geolocation.getCurrentPosition = function (success) {{
     print(browser.current_url)
     location_button = browser.find_element(By.XPATH, el_loc)
     location_button.click()
-    browser.implicitly_wait(10)
+    browser.implicitly_wait(5)
     # wait.WebDriverWait(browser, timeout=10).until(lambda: len(location_button.text) > 0)
     submit_button = browser.find_element(By.XPATH, el_sub)
     submit_button.click()
-    browser.implicitly_wait(10)
+    browser.implicitly_wait(5)
     # wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of_element_located(el_con))
     # confirm_button = browser.find_element(By.XPATH, el_con)
     # confirm_button.click()
@@ -78,6 +78,10 @@ if __name__ == "__main__":
     opt = parser.parse_args()
     print('options are: ', opt)
 
+    print(opt.username.upper())
+    print(opt.username.split(''))
+    print(opt.latitude)
+
     print('loading meta data...')
     with open('meta.json', 'r') as fp:
         meta = json.load(fp)
@@ -88,14 +92,15 @@ if __name__ == "__main__":
         attempts += 1
         print('-' * 20 + f'the {attempts:3} th attempt' + '-' * 20)
 
-        print('open browser...')
         browser = driver()
+
+        print('open login page...')
         try:
-            browser.get(meta['url'])
+            browser.get(meta['url']['login'])
         except Exception:
             print('network error!')
             continue
-        print('browser opened')
+        print('login page opened')
 
         print('login into system...')
         msg = login(
@@ -111,6 +116,14 @@ if __name__ == "__main__":
             print('login failed: ', msg)
             continue
         print('login succeeded')
+
+        print('open report page...')
+        try:
+            browser.get(meta['url']['report'])
+        except Exception:
+            print('network error!')
+            continue
+        print('report page opened')
 
         print('start reporting...')
         msg = report(
