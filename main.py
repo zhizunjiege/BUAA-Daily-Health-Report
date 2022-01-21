@@ -66,7 +66,6 @@ if __name__ == "__main__":
     opt = parser.parse_args()
     print('options are: ', opt)
 
-    print('loading meta data...')
     with open('meta.json', 'r') as fp:
         meta = json.load(fp)
     print('meta data is: ', meta)
@@ -101,15 +100,15 @@ if __name__ == "__main__":
 
         browser.implicitly_wait(8)
 
-        print('open report page...')
-        try:
-            browser.get(meta['url']['report'])
-            browser.implicitly_wait(20)
-            print(browser.title, browser.current_url)
-        except Exception:
-            print('network error!')
-            continue
-        print('report page opened')
+        # print('open report page...')
+        # try:
+        #     browser.get(meta['url']['report'])
+        #     browser.implicitly_wait(20)
+        #     print(browser.title, browser.current_url)
+        # except Exception:
+        #     print('network error!')
+        #     continue
+        # print('report page opened')
 
         print('start reporting...')
         msg = report(

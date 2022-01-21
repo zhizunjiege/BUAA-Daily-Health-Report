@@ -1,6 +1,6 @@
 {
   "url": {
-    "login": "https://app.buaa.edu.cn/uc/wap/login",
+    "login": "https://app.buaa.edu.cn/uc/wap/login?redirect=https%3A%2F%2Fapp.buaa.edu.cn%2Fsite%2FbuaaStudentNcov%2Findex",
     "report": "https://app.buaa.edu.cn/site/buaaStudentNcov/index"
   },
   "el": {
