@@ -1,11 +1,11 @@
 {
   "url": {
-    "login": "https://app.buaa.edu.cn/uc/wap/login?redirect=https%3A%2F%2Fapp.buaa.edu.cn%2Fsite%2FbuaaStudentNcov%2Findex",
+    "login": "https://app.buaa.edu.cn/uc/wap/login",
     "report": "https://app.buaa.edu.cn/site/buaaStudentNcov/index"
   },
   "el": {
-    "username": "//*[@id=\"app\"]/div[2]/div[1]/input",
-    "password": "//*[@id=\"app\"]/div[2]/div[2]/input",
+    "username_input": "//*[@id=\"app\"]/div[2]/div[1]/input",
+    "password_input": "//*[@id=\"app\"]/div[2]/div[2]/input",
     "login_btn": "//*[@id=\"app\"]/div[3]",
     "location_button": "/html/body/div[1]/div[1]/div/div[5]/div/div[2]/div[2]/div[2]/input",
     "submit_button": "/html/body/div[1]/div[1]/div/div[6]/a",

@@ -1,5 +1,6 @@
 import argparse
 import json
+import time
 
 from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
@@ -12,10 +13,18 @@ def driver():
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
     options.add_argument('disable-gpu')
-    options.add_argument('no-sandbox')
-    service = Service(executable_path=ChromeDriverManager().install())
+    service = Service(executable_path=ChromeDriverManager(log_level=0).install())
     browser = webdriver.Chrome(service=service, options=options)
     return browser
+
+
+# from selenium.webdriver.edge.service import Service
+# from webdriver_manager.microsoft import EdgeChromiumDriverManager
+
+# def driver():
+#     service = Service(executable_path=EdgeChromiumDriverManager(log_level=0).install())
+#     browser = webdriver.Edge(service=service)
+#     return browser
 
 
 def login(browser, username, password, el_user, el_pwd, el_btn):
@@ -25,7 +34,8 @@ def login(browser, username, password, el_user, el_pwd, el_btn):
     username_input.send_keys(username)
     password_input.send_keys(password)
     login_button.click()
-    # wait.WebDriverWait(browser, 20).until(EC.visibility_of_element_located([By.XPATH, el_loc]))
+    time.sleep(5)
+    # wait.WebDriverWait(browser, 5).until(EC.title_contains('个人中心'))
 
 
 def report(browser, longitude, latitude, el_loc, el_sub, el_con):
@@ -43,16 +53,15 @@ window.navigator.geolocation.getCurrentPosition = function (success) {{
     browser.execute_script(js_code)
     location_button = browser.find_element(By.XPATH, el_loc)
     location_button.click()
-    browser.implicitly_wait(5)
+    time.sleep(2)
+    # wait.WebDriverWait(browser, 5).until(lambda _: location_button.get_attribute('value'))
     submit_button = browser.find_element(By.XPATH, el_sub)
     submit_button.click()
-    browser.implicitly_wait(5)
     confirm_button = browser.find_element(By.XPATH, el_con)
     confirm_button.click()
-    browser.implicitly_wait(5)
-    # wait.WebDriverWait(browser, 20).until(lambda: len(location_button.text) > 0)
-    # wait.WebDriverWait(browser, 20).until(EC.visibility_of_element_located([By.XPATH, el_con]))
-    # wait.WebDriverWait(browser, 20).until_not(EC.element_to_be_clickable(submit_button))
+    time.sleep(2)
+    # wait.WebDriverWait(browser, 5).until(EC.visibility_of_element_located([By.XPATH, el_con]))
+    # wait.WebDriverWait(browser, 5).until_not(EC.element_to_be_clickable(submit_button))
 
 
 if __name__ == "__main__":
@@ -76,15 +85,11 @@ if __name__ == "__main__":
         print('-' * 20 + f'the {attempts:3} th attempt' + '-' * 20)
 
         browser = driver()
+        browser.implicitly_wait(30)
 
         print('open login page...')
-        try:
-            browser.get(meta['url']['login'])
-            browser.implicitly_wait(2)
-            print(browser.title, browser.current_url)
-        except Exception:
-            print('network error!')
-            continue
+        browser.get(meta['url']['login'])
+        print(browser.title, browser.current_url)
         print('login page opened')
 
         print('login into system...')
@@ -92,26 +97,19 @@ if __name__ == "__main__":
             browser,
             opt.username,
             opt.password,
-            meta['el']['username'],
-            meta['el']['password'],
+            meta['el']['username_input'],
+            meta['el']['password_input'],
             meta['el']['login_btn'],
         )
         print('login succeeded')
 
-        browser.implicitly_wait(8)
-
-        # print('open report page...')
-        # try:
-        #     browser.get(meta['url']['report'])
-        #     browser.implicitly_wait(20)
-        #     print(browser.title, browser.current_url)
-        # except Exception:
-        #     print('network error!')
-        #     continue
-        # print('report page opened')
+        print('open report page...')
+        browser.get(meta['url']['report'])
+        print(browser.title, browser.current_url)
+        print('report page opened')
 
         print('start reporting...')
-        msg = report(
+        report(
             browser,
             opt.longitude,
             opt.latitude,
@@ -119,9 +117,6 @@ if __name__ == "__main__":
             meta['el']['submit_button'],
             meta['el']['confirm_button'],
         )
-        if msg:
-            print('report failed: ', msg)
-            continue
         print('report succeeded')
 
         break
