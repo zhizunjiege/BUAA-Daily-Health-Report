@@ -24,8 +24,11 @@ def login(browser, username, password, el_user, el_pwd, el_btn):
     login_button = browser.find_element(By.XPATH, el_btn)
     username_input.send_keys(username)
     password_input.send_keys(password)
+    print(username)
+    print(password)
     login_button.click()
-    wait.WebDriverWait(browser, timeout=10).until(EC.title_contains('北航师生报平安系统'))
+    wait.WebDriverWait(browser, timeout=10).until(EC.url_contains('buaaStudentNcov'))
+    # title_contains('北航师生报平安系统')
 
     # TODO: check whether login succeeded or not
 
@@ -56,7 +59,7 @@ window.navigator.geolocation.getCurrentPosition = function (success) {{
     wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of(confirm_button))
     # confirm_button.click()
     # wait.WebDriverWait(browser, timeout=10).until_not(EC.element_to_be_clickable(submit_button))
-    print('ok')
+
     # TODO: check whether report succeeded or not
 
     return ''
