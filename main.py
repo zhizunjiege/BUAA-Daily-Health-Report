@@ -18,21 +18,18 @@ def driver():
     return browser
 
 
-def login(browser, username, password, el_user, el_pwd, el_btn):
+def login(browser, username, password, el_user, el_pwd, el_btn, el_loc):
     username_input = browser.find_element(By.XPATH, el_user)
     password_input = browser.find_element(By.XPATH, el_pwd)
     login_button = browser.find_element(By.XPATH, el_btn)
     username_input.send_keys(username)
     password_input.send_keys(password)
-    print(username)
-    print(password)
     login_button.click()
-    wait.WebDriverWait(browser, timeout=10).until(EC.url_contains('buaaStudentNcov'))
-    # title_contains('北航师生报平安系统')
+    wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of_element_located(el_loc))
 
     # TODO: check whether login succeeded or not
 
-    return ''
+    return None
 
 
 def report(browser, longitude, latitude, el_loc, el_sub, el_con):
@@ -47,22 +44,22 @@ window.navigator.geolocation.getCurrentPosition = function (success) {{
   success(position);
 }};
     '''
+
     browser.execute_script(js_code)
-    # browser.implicitly_wait(1)  # or time.sleep?
 
     location_button = browser.find_element(By.XPATH, el_loc)
-    submit_button = browser.find_element(By.XPATH, el_sub)
-    confirm_button = browser.find_element(By.XPATH, el_con)
     location_button.click()
-    wait.WebDriverWait(browser, timeout=10).until(lambda: len(location_button.text))
+    wait.WebDriverWait(browser, timeout=10).until(lambda: len(location_button.text) > 0)
+    submit_button = browser.find_element(By.XPATH, el_sub)
     submit_button.click()
-    wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of(confirm_button))
+    wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of_element_located(el_con))
+    # confirm_button = browser.find_element(By.XPATH, el_con)
     # confirm_button.click()
     # wait.WebDriverWait(browser, timeout=10).until_not(EC.element_to_be_clickable(submit_button))
 
     # TODO: check whether report succeeded or not
 
-    return ''
+    return None
 
 
 if __name__ == "__main__":
@@ -103,6 +100,7 @@ if __name__ == "__main__":
             meta['el']['username'],
             meta['el']['password'],
             meta['el']['login_btn'],
+            meta['el']['location_button'],
         )
         if msg:
             print('login failed: ', msg)
