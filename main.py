@@ -2,7 +2,9 @@ import argparse
 import json
 
 from selenium import webdriver
-from selenium.webdriver.support import wait, expected_conditions as EC
+from selenium.webdriver.chrome.service import Service
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support import expected_conditions as EC, wait
 from webdriver_manager.chrome import ChromeDriverManager
 
 
@@ -11,18 +13,19 @@ def driver():
     options.add_argument('headless')
     options.add_argument('disable-gpu')
     options.add_argument('no-sandbox')
-    browser = webdriver.Chrome(ChromeDriverManager().install(), options=options)
+    service = Service(executable_path=ChromeDriverManager().install())
+    browser = webdriver.Chrome(service=service, options=options)
     return browser
 
 
 def login(browser, username, password, el_user, el_pwd, el_btn):
-    username_input = browser.find_element_by_xpath(el_user)
-    password_input = browser.find_element_by_xpath(el_pwd)
-    login_button = browser.find_element_by_xpath(el_btn)
+    username_input = browser.find_element(By.XPATH, el_user)
+    password_input = browser.find_element(By.XPATH, el_pwd)
+    login_button = browser.find_element(By.XPATH, el_btn)
     username_input.send_keys(username)
     password_input.send_keys(password)
     login_button.click()
-    wait.WebDriverWait(browser, timeout=3).until(EC.title_contains('北航师生报平安系统'))
+    wait.WebDriverWait(browser, timeout=10).until(EC.title_contains('北航师生报平安系统'))
 
     # TODO: check whether login succeeded or not
 
@@ -44,16 +47,16 @@ window.navigator.geolocation.getCurrentPosition = function (success) {{
     browser.execute_script(js_code)
     # browser.implicitly_wait(1)  # or time.sleep?
 
-    location_button = browser.find_element_by_xpath(el_loc)
-    submit_button = browser.find_element_by_xpath(el_sub)
-    confirm_button = browser.find_element_by_xpath(el_con)
+    location_button = browser.find_element(By.XPATH, el_loc)
+    submit_button = browser.find_element(By.XPATH, el_sub)
+    confirm_button = browser.find_element(By.XPATH, el_con)
     location_button.click()
-    wait.WebDriverWait(browser, timeout=3).until(lambda: len(location_button.text))
+    wait.WebDriverWait(browser, timeout=10).until(lambda: len(location_button.text))
     submit_button.click()
-    wait.WebDriverWait(browser, timeout=3).until(EC.visibility_of(confirm_button))
-    confirm_button.click()
-    wait.WebDriverWait(browser, timeout=3).until_not(EC.element_to_be_clickable(submit_button))
-
+    wait.WebDriverWait(browser, timeout=10).until(EC.visibility_of(confirm_button))
+    # confirm_button.click()
+    # wait.WebDriverWait(browser, timeout=10).until_not(EC.element_to_be_clickable(submit_button))
+    print('ok')
     # TODO: check whether report succeeded or not
 
     return ''
