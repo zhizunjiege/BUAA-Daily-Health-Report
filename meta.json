@@ -1,6 +1,6 @@
 {
   "url": {
-    "login": "https://app.buaa.edu.cn/uc/wap/login",
+    "login": "https://app.buaa.edu.cn/uc/wap/login?redirect=https%3A%2F%2Fapp.buaa.edu.cn%2Fsite%2FbuaaStudentNcov%2Findex",
     "report": "https://app.buaa.edu.cn/site/buaaStudentNcov/index"
   },
   "el": {
@@ -10,5 +10,10 @@
     "location_button": "/html/body/div[1]/div[1]/div/div[5]/div/div[2]/div[2]/div[2]/input",
     "submit_button": "/html/body/div[1]/div[1]/div/div[6]/a",
     "confirm_button": "//*[@id=\"wapcf\"]/div/div[2]/div[2]"
+  },
+  "txt": {
+    "allowed": "提交",
+    "reported": "您已提交过信息",
+    "disallowed": "未到填报时间"
   }
 }

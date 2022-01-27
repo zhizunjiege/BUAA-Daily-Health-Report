@@ -18,6 +18,11 @@ def driver():
     return browser
 
 
+# import argparse
+# import json
+# import time
+# from selenium import webdriver
+# from selenium.webdriver.common.by import By
 # from selenium.webdriver.edge.service import Service
 # from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
@@ -34,8 +39,16 @@ def login(browser, username, password, el_user, el_pwd, el_btn):
     username_input.send_keys(username)
     password_input.send_keys(password)
     login_button.click()
-    time.sleep(5)
+    time.sleep(3)
     # wait.WebDriverWait(browser, 5).until(EC.title_contains('个人中心'))
+
+
+def check(browser, el_sub, txt):
+    text = browser.find_element(By.XPATH, el_sub).get_attribute('text')
+    for key in txt:
+        if text == txt[key]:
+            return key, text
+    return None, text
 
 
 def report(browser, longitude, latitude, el_loc, el_sub, el_con):
@@ -57,6 +70,7 @@ window.navigator.geolocation.getCurrentPosition = function (success) {{
     # wait.WebDriverWait(browser, 5).until(lambda _: location_button.get_attribute('value'))
     submit_button = browser.find_element(By.XPATH, el_sub)
     submit_button.click()
+    time.sleep(2)
     confirm_button = browser.find_element(By.XPATH, el_con)
     confirm_button.click()
     time.sleep(2)
@@ -75,50 +89,75 @@ if __name__ == "__main__":
     opt = parser.parse_args()
     print('options are: ', opt)
 
-    with open('meta.json', 'r') as fp:
+    with open('meta.json', 'r', encoding="utf8") as fp:
         meta = json.load(fp)
     print('meta data is: ', meta)
 
     attempts = 0
-    while attempts <= opt.max_attempts:
-        attempts += 1
-        print('-' * 20 + f'the {attempts:3} th attempt' + '-' * 20)
+    while attempts < opt.max_attempts:
+        print('-' * 20 + f'the {attempts+1:3} th attempt' + '-' * 20)
 
         browser = driver()
         browser.implicitly_wait(30)
 
-        print('open login page...')
-        browser.get(meta['url']['login'])
-        print(browser.title, browser.current_url)
-        print('login page opened')
+        try:
+            print('open login page...')
+            browser.get(meta['url']['login'])
+            print(browser.title, browser.current_url)
+            print('login page opened')
 
-        print('login into system...')
-        login(
-            browser,
-            opt.username,
-            opt.password,
-            meta['el']['username_input'],
-            meta['el']['password_input'],
-            meta['el']['login_btn'],
-        )
-        print('login succeeded')
+            print('login into system...')
+            login(
+                browser,
+                opt.username,
+                opt.password,
+                meta['el']['username_input'],
+                meta['el']['password_input'],
+                meta['el']['login_btn'],
+            )
+            print('login succeeded')
 
-        print('open report page...')
-        browser.get(meta['url']['report'])
-        print(browser.title, browser.current_url)
-        print('report page opened')
+            print('open report page...')
+            browser.get(meta['url']['report'])
+            print(browser.title, browser.current_url)
+            print('report page opened')
 
-        print('start reporting...')
-        report(
-            browser,
-            opt.longitude,
-            opt.latitude,
-            meta['el']['location_button'],
-            meta['el']['submit_button'],
-            meta['el']['confirm_button'],
-        )
-        print('report succeeded')
+            time.sleep(2)
 
-        break
+            print('check report status...')
+            status, text = check(
+                browser,
+                meta['el']['submit_button'],
+                meta['txt'],
+            )
+            print(status, text)
+            if status == "allowed":
+                print('report allowed')
+            elif status == "reported":
+                print('reported and will quit the script')
+                break
+            elif status == "disallowed":
+                raise Exception('report disallowed and will try again')
+            else:
+                raise Exception('unknown status!')
 
-    print('task finished successfully!')
+            print('start reporting...')
+            report(
+                browser,
+                opt.longitude,
+                opt.latitude,
+                meta['el']['location_button'],
+                meta['el']['submit_button'],
+                meta['el']['confirm_button'],
+            )
+            print('report succeeded')
+            break
+        except Exception as e:
+            print(e)
+            attempts += 1
+            continue
+
+    if attempts < opt.max_attempts:
+        print('task finished successfully!')
+    else:
+        raise Exception('task failed!')

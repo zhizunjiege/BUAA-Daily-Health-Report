@@ -127,3 +127,13 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# Personal secrets
+secrets/
+secrets.*
+
+# Temp file
+tmp/
+temp/
+tmp.*
+temp.*
