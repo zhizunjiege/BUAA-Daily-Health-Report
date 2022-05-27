@@ -1,5 +1,6 @@
 import argparse
 import json
+import random
 import time
 
 from selenium import webdriver
@@ -9,10 +10,11 @@ from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
 
 
-def driver():
+def driver(headers):
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
     options.add_argument('disable-gpu')
+    options.add_argument(f'user-agent="{headers["user_agent"]}"')
     service = Service(executable_path=ChromeDriverManager(log_level=0).install())
     browser = webdriver.Chrome(service=service, options=options)
     return browser
@@ -20,16 +22,27 @@ def driver():
 
 # import argparse
 # import json
+# import random
 # import time
+
 # from selenium import webdriver
 # from selenium.webdriver.common.by import By
 # from selenium.webdriver.edge.service import Service
 # from webdriver_manager.microsoft import EdgeChromiumDriverManager
 
-# def driver():
+# def driver(headers):
+#     options = webdriver.EdgeOptions()
+#     # options.add_argument(f'sec-ch-ua="{headers["sec_ch_ua"]}"')
+#     # options.add_argument(f'sec-ch-ua-mobile="{headers["sec_ch_ua_mobile"]}"')
+#     # options.add_argument(f'sec-ch-ua-platform="{headers["sec_ch_ua_platform"]}"')
+#     options.add_argument(f'user-agent="{headers["user_agent"]}"')
 #     service = Service(executable_path=EdgeChromiumDriverManager(log_level=0).install())
-#     browser = webdriver.Edge(service=service)
+#     browser = webdriver.Edge(service=service, options=options)
 #     return browser
+
+
+def get_random(scale=1.0):
+    return scale * (2 * random.random() - 1)
 
 
 def login(browser, username, password, el_user, el_pwd, el_btn):
@@ -56,8 +69,8 @@ def report(browser, longitude, latitude, el_loc, el_sub, el_con):
 window.navigator.geolocation.getCurrentPosition = function (success) {{
   let position = {{
     coords: {{
-      longitude: "{longitude}",
-      latitude: "{latitude}",
+      longitude: "{longitude+get_random(1e-4)}",
+      latitude: "{latitude+get_random(1e-4)}",
     }},
   }};
   success(position);
@@ -97,7 +110,7 @@ if __name__ == "__main__":
     while attempts < opt.max_attempts:
         print('-' * 20 + f'the {attempts+1:3} th attempt' + '-' * 20)
 
-        browser = driver()
+        browser = driver(meta['header'])
         browser.implicitly_wait(30)
 
         try:
