@@ -2,7 +2,7 @@ name: Auto script for BUAA Daily Health Report
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 9,10,11 * * *"
+    - cron: "0 8,9,10 * * *"
 jobs:
   Report:
     runs-on: ubuntu-latest
